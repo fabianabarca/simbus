@@ -1,0 +1,7 @@
+requests
+celery[redis]
+sqlalchemy
+pandas
+geopandas
+mkdocs-material
+python-decouple
