@@ -27,6 +27,10 @@ app = Celery("tasks", broker="redis://localhost")
 IMPORTANTE
 
 Hacer pruebas locales primero, y solamente después (posiblemente luego de revisión) en el servidor.
+
+Quizá sí hay que usar la base de datos, porque hay que guardar en alguna parte el estado de los viajes. Las tareas de Celery no guardan datos entre ejecuciones, así que si se necesita guardar el estado de los viajes, hay que hacerlo en la base de datos.
+
+Ver ejemplo en models.py y aquí al final de cómo definir una tabla y cómo consultar y guardar datos en la base de datos.
 """
 
 @app.task
@@ -111,3 +115,26 @@ app.conf.beat_schedule = {
         "schedule": timedelta(seconds=10),
     },
 }
+
+"""
+from models import session, TestData
+
+# Extraer datos filtrados (ejemplo: pm10 > 50)
+query = session.query(TestData).filter(TestData.pm10 > 50)
+
+for row in query:
+    print(row)
+
+# Guardar un registro
+record = TestData(
+    timestamp=datetime.now(),
+    pm10=45,
+    pm25=12,
+    latitude=9.047,
+    longitude=-84.732,
+    altitude=654,
+    country="Costa Rica",
+)
+session.add(record)
+session.commit()
+"""
